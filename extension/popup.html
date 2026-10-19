@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>hea-indir</title><link rel="stylesheet" href="popup.css"></head><body>
+<header><img src="icons/48.png" width="36" height="36" alt=""><div><strong>hea<span>-indir</span></strong><small>İzlediğin video, bilgisayarında.</small></div><b>0.3</b></header>
+<p id="connection" role="status">Program kontrol ediliyor…</p>
+<form id="pair-form" hidden><label for="code">Programdaki 6 haneli eşleştirme kodu</label><div class="pair-row"><input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="off" required><button type="submit">Bağlan</button></div><small>hea-indir → Ayarlar → Chrome eklentisi</small></form>
+<section><div class="section-heading"><h1>Bu sayfadaki videolar</h1><button class="subtle" id="refresh" title="Yenile">↻</button></div><div id="sources"></div><button id="send-page" class="secondary" hidden>Sayfa bağlantısını programda dene</button></section>
+<p id="notice" role="status" hidden></p><footer>Sağ üstteki video düğmesini programın <b>Ayarlar → Chrome eklentisi</b> bölümünden kapatabilirsin.</footer>
+<script src="popup.js"></script></body></html>

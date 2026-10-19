@@ -1,0 +1,61 @@
+{
+  "name": "hea-indir",
+  "productName": "hea-indir",
+  "version": "0.3.0",
+  "description": "Web videolarını ve seslerini indirmek için Windows uygulaması ve Chrome eklentisi",
+  "author": "hea-indir",
+  "license": "MIT",
+  "main": "app/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "tools": "node scripts/fetch-tools.mjs",
+    "test": "node --test tests/*.test.cjs",
+    "pack": "electron-builder --win zip --x64",
+    "pack:dir": "electron-builder --win --dir --x64",
+    "pack:portable": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "electron-builder": "26.15.3",
+    "extract-zip": "2.0.1"
+  },
+  "build": {
+    "appId": "com.hea.indir",
+    "productName": "hea-indir",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "app/**/*",
+      "assets/**/*",
+      "package.json",
+      "LICENSE",
+      "README.md"
+    ],
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin"
+      },
+      {
+        "from": "licenses",
+        "to": "licenses"
+      },
+      {
+        "from": "extension",
+        "to": "extension"
+      }
+    ],
+    "win": {
+      "target": "zip",
+      "icon": "assets/icon.ico",
+      "artifactName": "hea-indir-${version}-Windows-x64.${ext}",
+      "signExecutable": false
+    },
+    "portable": {
+      "artifactName": "hea-indir-${version}-Windows-x64.exe"
+    },
+    "compression": "normal",
+    "npmRebuild": false
+  }
+}

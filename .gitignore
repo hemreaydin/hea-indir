@@ -1,0 +1,23 @@
+node_modules/
+dist*/
+.tools-cache/
+bin/*.exe
+test-output/
+*.log
+
+# Local settings, credentials, downloaded media and development fixtures
+.env
+.env.*
+!.env.example
+state.json
+state.json.tmp
+downloads/
+browser-runtime/
+*-profile*/
+*.m4s
+*.ts.tmp
+*.part
+*.zip
+*.exe
+Thumbs.db
+.DS_Store

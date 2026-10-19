@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>hea-indir</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="readability.css">
+  <link rel="stylesheet" href="themes.css">
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2 7M3 4v7h7m2-4v5l3 2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-.5 3-2 .9L4 6l-2 3 2.3 2v2L2 15l2 3 2.5-.9 2 .9.5 3h6l.5-3 2-.9 2.5.9 2-3-2.3-2v-2L22 9l-2-3-2.5.9-2-.9L15 3Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V5a1 1 0 0 1 1-1h5l2 3h9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm0 3h18"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4m-6 5-2 2a3.5 3.5 0 0 0 5 5l4-4a3.5 3.5 0 0 0 0-5m1-2 2-2a3.5 3.5 0 0 0-5-5L9 7a3.5 3.5 0 0 0 0 5"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H5v16h14V5h-3M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3Z"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M10 17V5l10-2v12M10 8l10-2"/><ellipse cx="7" cy="18" rx="3" ry="3"/><ellipse cx="17" cy="16" rx="3" ry="3"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4ZM16 9l6 6m0-6-6 6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3h7v7M21 3 10 14M10 3H4v17h17v-7"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 10A8 8 0 0 0 6 5L3 8m0-5v5h5M4 14a8 8 0 0 0 14 5l3-3m0 5v-5h-5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14a9 9 0 0 1-10.5-10.5A9 9 0 1 0 20.5 14Z"/></symbol>
+  </defs></svg>
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="hea-indir ana sayfa"><span class="brand-mark"><svg class="icon"><use href="#i-download"/></svg></span><span>hea<span class="brand-light">-indir</span><small>BİR LİNK KADAR KOLAY.</small></span></a>
+    <div class="nav-label">KÜTÜPHANEN</div>
+    <nav aria-label="Ana menü">
+      <button class="nav-item active" data-view="download"><svg class="icon"><use href="#i-download"/></svg>Yeni indirme<span class="nav-count" id="nav-count">0</span></button>
+      <button class="nav-item" data-view="history"><svg class="icon"><use href="#i-history"/></svg>İndirme geçmişi</button>
+      <button class="nav-item" data-view="settings"><svg class="icon"><use href="#i-settings"/></svg>Ayarlar</button>
+    </nav>
+    <div class="sidebar-bottom"><div class="small-note"><span class="note-symbol">↓</span><strong>Sevdiklerin yanında.</strong><p>Videoların ve seslerin,<br>istediğin zaman elinin altında.</p></div><div class="sidebar-version"><span class="online-dot"></span>Windows sürümü<span id="version">v0.3.0</span></div></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span id="breadcrumb">Çalışma alanı <span>/</span> Yeni indirme</span><div class="topbar-actions"><span class="local-badge"><span class="online-dot"></span>Bilgisayarına kaydeder</span><button id="theme-toggle" class="theme-switch" title="Açık temaya geç"><svg class="icon"><use href="#i-sun"/></svg><span>Açık görünüm</span></button></div></header>
+    <main>
+      <section id="download-view" class="view">
+        <div class="page-intro"><div><div class="eyebrow">KOPYALA. YAPIŞTIR. SENİNLE KALSIN.</div><h1>Bir link, istediğin içerik<span>.</span></h1><p>Videonu ya da sadece sesini, birkaç tıkla bilgisayarına indir.</p></div><span class="intro-mark" aria-hidden="true">↘</span></div>
+        <div class="platforms" aria-label="Desteklenen platformlar"><span class="platform"><b class="platform-icon youtube">▶</b>YouTube</span><span class="platform"><b class="platform-icon instagram">◎</b>Instagram</span><span class="platform"><b class="platform-icon tiktok">♪</b>TikTok</span><span class="platform"><b class="platform-icon facebook">f</b>Facebook</span><span class="platform-note">Ve daha fazla video sitesi.</span></div>
+        <section class="composer" aria-labelledby="composer-heading">
+          <div class="section-label"><span class="step-number">01</span><h2 id="composer-heading">Bağlantını ekle</h2><span class="keyboard-hint">Enter ↵</span></div>
+          <form id="link-form"><div class="link-input"><svg class="icon"><use href="#i-link"/></svg><textarea id="url-input" aria-label="Video bağlantısı" placeholder="Video bağlantısını buraya yapıştır…" rows="1" spellcheck="false"></textarea><button type="button" id="paste-button" class="paste-button" title="Panodan yapıştır"><svg class="icon"><use href="#i-clipboard"/></svg><span>Yapıştır</span></button></div><button class="button primary" type="submit" id="add-button">Bağlantıyı ekle<svg class="icon"><use href="#i-plus"/></svg></button></form>
+          <p class="input-hint" id="input-hint">Birden fazla bağlantıyı ayrı satırlara yapıştırabilirsin.</p>
+          <div class="divider"></div>
+          <div class="section-label"><span class="step-number">02</span><h2>Nasıl indirmek istersin?</h2><span class="muted-small">Bekleyen tüm içeriklere uygulanır</span></div>
+          <div class="selection-row"><div class="mode-group" role="group" aria-label="İndirme türü"><button class="mode active" data-mode="both" aria-pressed="true"><svg class="icon"><use href="#i-video"/></svg><span>Video + ses<small>Görüntü ve ses birlikte</small></span><span class="radio-dot"></span></button><button class="mode" data-mode="audio" aria-pressed="false"><svg class="icon"><use href="#i-music"/></svg><span>Yalnızca ses<small>Müzik, podcast ve dahası</small></span><span class="radio-dot"></span></button><button class="mode" data-mode="video" aria-pressed="false"><svg class="icon"><use href="#i-mute"/></svg><span>Yalnızca video<small>Sessiz görüntü</small></span><span class="radio-dot"></span></button></div></div>
+          <div class="format-row"><label>Dosya formatı<select id="format-select" aria-label="Dosya formatı"></select></label><label>Kalite<select id="quality-select" aria-label="Kalite"></select></label><p class="format-tip" id="format-tip"><svg class="icon"><use href="#i-info"/></svg><span>MP4, çoğu cihazla uyumlu seçimdir.</span></p></div>
+        </section>
+        <section class="queue-section"><div class="queue-heading"><h2>İndirme kuyruğu <span class="count-badge" id="queue-count">0</span></h2><button class="text-button" id="clear-queue">Listeyi temizle</button></div><div id="queue-list"></div></section>
+      </section>
+      <section id="history-view" class="view" hidden><div class="page-intro"><div><div class="eyebrow">HEPSİ BİR ARADA</div><h1>İndirme geçmişin<span>.</span></h1><p>Tamamlanan indirmelerini bul, dosyalarının olduğu klasörü aç.</p></div></div><div class="queue-heading"><h2>Tamamlananlar <span class="count-badge" id="history-count">0</span></h2><button id="clear-history" class="text-button">Geçmişi temizle</button></div><div id="history-list"></div><p class="footnote">Listeyi temizlemek bilgisayarındaki dosyaları silmez.</p></section>
+      <section id="settings-view" class="view" hidden><div class="page-intro"><div><div class="eyebrow">SANA GÖRE</div><h1>Küçük ayarlar, kolay indirmeler<span>.</span></h1><p>Dosyalarının yerini belirle, indirme motorunu güncel tut.</p></div></div><div class="settings-card browser-card"><div class="browser-heading"><div class="setting-heading"><svg class="icon"><use href="#i-link"/></svg><div><h2>Chrome eklentisi</h2><p>İzlediğin videoyu bir tıkla bilgisayarına indir.</p></div></div><label class="browser-switch"><input type="checkbox" id="browser-enabled" role="switch"><span></span>Video düğmesini göster</label></div><p id="browser-status" class="browser-status" role="status">Bağlantı hazırlanıyor…</p><div class="browser-pair-row"><div><small>EŞLEŞTİRME KODUN</small><strong id="browser-code">—</strong></div><button class="button secondary" id="browser-code-copy">Kodu kopyala</button><button class="text-button" id="browser-pair">Yeni kod / bağlantıyı sıfırla</button></div><details class="browser-help"><summary>Chrome'a nasıl eklerim?</summary><ol><li>Aşağıdaki düğmeyle eklenti klasörünü aç.</li><li>Chrome adres çubuğuna <b>chrome://extensions</b> yaz.</li><li><b>Geliştirici modu</b>nu aç, <b>Paketlenmemiş öğe yükle</b> ile bu klasörü seç.</li><li>Chrome'daki hea-indir simgesine basıp buradaki kodu gir.</li></ol><button class="button secondary" id="browser-folder">Eklenti klasörünü aç</button></details><p class="footnote">Program açıkken çalışır. Anahtarı kapatınca sayfadaki düğme birkaç saniye içinde gizlenir; mevcut indirmeler devam eder. DRM korumalı içerikler desteklenmez.</p></div><div class="settings-card appearance-row"><div class="setting-heading"><svg class="icon"><use href="#i-moon"/></svg><div><h2>Görünüm</h2><p>Koyu veya açık tema seç. Tercihin sonraki açılışta hatırlanır.</p></div></div><select id="theme-select" aria-label="Görünüm teması"><option value="dark">Koyu görünüm</option><option value="light">Açık görünüm</option></select></div><div class="settings-card"><div class="setting-heading"><svg class="icon"><use href="#i-folder"/></svg><div><h2>İndirme klasörü</h2><p>Yeni indirmelerin bu klasöre kaydedilir.</p></div></div><div class="folder-setting"><span id="settings-folder"></span><button class="button secondary choose-folder">Klasörü değiştir</button></div><p class="footnote">Devam eden indirme kendi klasöründe tamamlanır.</p></div><div class="settings-card"><div class="setting-heading"><svg class="icon"><use href="#i-refresh"/></svg><div><h2>İndirme motoru</h2><p>Platform değişikliklerine uyum için motorunu güncel tut.</p></div></div><div class="engine-line"><span id="engine-status">Sürüm bilgisi kontrol ediliyor…</span><button id="update-engine" class="button secondary"><svg class="icon"><use href="#i-refresh"/></svg>Güncellemeleri kontrol et</button></div><div id="engine-components" class="engine-components"></div></div><div class="settings-card about-card"><span class="brand-mark"><svg class="icon"><use href="#i-download"/></svg></span><div><h2>hea-indir <span class="beta-badge">v0.3.0</span></h2><p>Web videoları için Windows uygulaması ve Chrome eklentisi.</p><p class="footnote">Bu sürüm herkese açık, tekil videolar içindir. Özel içerikler, hesap girişi, canlı yayınlar ve oynatma listeleri desteklenmez. Yalnızca indirme hakkın olan içerikleri kaydet.</p></div></div></section>
+    </main>
+    <footer class="download-bar"><button class="save-location choose-folder" title="İndirme klasörünü değiştir"><span class="folder-tile"><svg class="icon"><use href="#i-folder"/></svg></span><span><small>KAYDEDİLECEK KLASÖR</small><strong id="folder-name">İndirilenler / hea-indir</strong></span><span class="change-label">Değiştir</span></button><div class="download-bar-right"><span id="ready-label">Linkini ekleyerek başla</span><button id="download-all" class="button navy" disabled><svg class="icon"><use href="#i-download"/></svg><span>İndirmeyi başlat</span></button></div></footer>
+  </div>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="detail-dialog"><div class="dialog-heading"><h2>İşlem ayrıntısı</h2><button id="close-detail" class="icon-button" aria-label="Kapat"><svg class="icon"><use href="#i-close"/></svg></button></div><p id="detail-message"></p><pre id="detail-text"></pre><p class="footnote">İpucu: Ayarlar’dan indirme motorunu güncelleyip tekrar deneyebilirsin.</p></dialog>
+  <script src="renderer.js"></script>
+</body>
+</html>
