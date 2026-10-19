@@ -1,17 +1,37 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, clipboard, session, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, clipboard, session, nativeTheme, Tray, Menu } = require('electron');
 const fs = require('node:fs');
 const fsp = require('node:fs/promises');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { randomUUID } = require('node:crypto');
+const { randomUUID, randomBytes } = require('node:crypto');
 const { Engine, validateUrl, options, userError, sanitizeDetail } = require('./engine.cjs');
 const { applyQueueDefaults, normalizeTheme } = require('./preferences.cjs');
 const { BrowserBridge } = require('./browser-bridge.cjs');
 const extensionConfig = require('./extension-config.json');
+const { installNativeHost } = require('./native-install.cjs');
+const backgroundStart = process.argv.includes('--background');
 
 const testDir = !app.isPackaged && process.env.HEA_TEST_PROFILE;
 if (testDir) app.setPath('userData', path.resolve(testDir));
 let win, state, engine, bridge, active = null, inspecting = false, quitting = false, updating = false;
+let tray;
+function showWindow() { if (win && !win.isDestroyed()) { win.show(); if (win.isMinimized()) win.restore(); win.focus(); } }
+function ensureBrowserToken() {
+  if (!state.browser.token) {
+    state.browser.token = randomBytes(32).toString('hex');
+    if (bridge) { bridge.token = state.browser.token; bridge.code = ''; }
+    persist();
+  }
+}
+async function exitApplication() {
+  if (busy()) {
+    const result = await dialog.showMessageBox({ type: 'question', title: 'İşlem devam ediyor', message: 'İndirmeleri iptal edip hea-indir’den çıkılsın mı?', buttons: ['Devam et', 'İptal et ve çık'], defaultId: 0, cancelId: 0 });
+    if (result.response !== 1) return;
+  }
+  quitting = true;
+  await Promise.all([...engine.children.keys()].map(id => engine.cancel(id)));
+  persist(); app.quit();
+}
 const uiUrl = pathToFileURL(path.join(__dirname, 'index.html')).href;
 const bin = path.join(app.isPackaged ? process.resourcesPath : path.join(__dirname, '..'), 'bin');
 const updateBin = () => path.join(app.getPath('userData'), 'tools', 'yt-dlp.exe');
@@ -84,6 +104,10 @@ function handle(name, handler) {
   });
 }
 function bindIpc() {
+  handle('browser-install', async () => {
+    if (!app.isPackaged) throw new Error('Otomatik bağlantı için hazır Windows paketini kullan.');
+    return installNativeHost({ resources: process.resourcesPath, userData: app.getPath('userData') });
+  });
   handle('state', () => snapshot());
   handle('browser-enabled', enabled => { state.browser.enabled = enabled === true; publish(); });
   handle('browser-pair', () => { bridge.reset(); return bridge.status().code; });
@@ -172,13 +196,16 @@ function bindIpc() {
 }
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
-  app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
+  app.on('second-instance', (_event, argv) => { if (argv.includes('--background')) { if (state) ensureBrowserToken(); } else showWindow(); });
   app.whenReady().then(() => {
     app.setAppUserModelId('com.hea.indir');
     state = readState();
+    if (backgroundStart) ensureBrowserToken();
     nativeTheme.themeSource = state.theme;
     bridge = new BrowserBridge({ ...extensionConfig, token: state.browser.token, enabled: () => state.browser.enabled, selection: () => state.defaults,
       onPair: token => { state.browser.token = token; persist(); }, onChange: () => publish(false),
+      onEnabled: enabled => { state.browser.enabled = enabled; publish(); },
+      jobs: () => state.jobs.filter(j => j.pageUrl).slice(-5).reverse().map(j => ({ id: j.id, title: j.title, status: j.status, percent: j.percent, error: j.error || '' })),
       onDownload: source => {
         if (updating || quitting) throw new Error('Programdaki işlemin bitmesini bekle.');
         if (state.jobs.length >= 200) throw new Error('Kuyruk dolu. Önce eski kayıtları kaldır.');
@@ -186,7 +213,7 @@ else {
         const checked = validateUrl(source.url);
         const job = { ...source, ...checked, id: randomUUID(), title: source.browserTitle, creator: new URL(source.pageUrl).hostname, status: 'inspecting', autoStart: true, options: { ...state.defaults }, createdAt: new Date().toISOString(), percent: 0 };
         state.jobs.push(job); publish(); inspectQueue();
-        if (win) win.flashFrame(true);
+        if (win?.isVisible()) win.flashFrame(true);
         return { id: job.id, message: 'hea-indir’e gönderildi. Video kontrol edildikten sonra indirme başlayacak.' };
       }
     });
@@ -201,11 +228,16 @@ else {
     win.webContents.on('will-navigate', event => event.preventDefault());
     win.webContents.on('will-attach-webview', event => event.preventDefault());
     win.setMenu(null);
+    tray = new Tray(path.join(__dirname, '../assets/icon.ico'));
+    tray.setToolTip('hea-indir · Arka planda hazır');
+    tray.setContextMenu(Menu.buildFromTemplate([{ label: 'hea-indir’i aç', click: showWindow }, { type: 'separator' }, { label: 'Çıkış', click: exitApplication }]));
+    tray.on('double-click', showWindow);
     bindIpc();
     bridge.start().catch(() => { bridge.error = 'Tarayıcı bağlantısı açılamadı. Diğer hea-indir sürümlerini kapatıp yeniden aç.'; publish(false); });
     win.loadFile(path.join(__dirname, 'index.html'));
-    win.once('ready-to-show', () => { win.show(); inspectQueue(); });
+    win.once('ready-to-show', () => { if (!backgroundStart) win.show(); inspectQueue(); });
     win.on('close', async event => {
+      if (!quitting && tray) { event.preventDefault(); win.hide(); return; }
       if (quitting || !busy()) return;
       event.preventDefault();
       const result = await dialog.showMessageBox(win, { type: 'question', title: 'İşlem devam ediyor', message: 'İşlemleri iptal edip uygulamayı kapatmak istiyor musun?', buttons: ['Açık kalsın', 'İptal et ve kapat'], defaultId: 0, cancelId: 0 });
@@ -215,7 +247,7 @@ else {
         persist(); app.quit();
       }
     });
-  }).catch(err => { dialog.showErrorBox('hea-indir açılamadı', err.message); app.quit(); });
+  }).catch(err => { if (!backgroundStart) dialog.showErrorBox('hea-indir açılamadı', err.message); app.quit(); });
   app.on('window-all-closed', () => app.quit());
-  app.on('before-quit', () => { bridge?.close(); });
+  app.on('before-quit', () => { quitting = true; bridge?.close(); tray?.destroy(); });
 }

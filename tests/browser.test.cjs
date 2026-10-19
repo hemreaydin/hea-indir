@@ -31,7 +31,7 @@ test('video/manifest algılama parçaları eler ve aynı kaynağı tekilleştiri
 
 test('tarayıcı köprüsü eşleştirme, origin/token doğrulama ve kapatma anahtarı', async t => {
   let enabled = true, received, saved;
-  const bridge = new BrowserBridge({ extensionId: config.extensionId, port: 0, enabled: () => enabled, onPair: token => { saved = token; }, onDownload: data => { received = data; return { id: 'job' }; } });
+  const bridge = new BrowserBridge({ extensionId: config.extensionId, port: 0, enabled: () => enabled, onEnabled: value => { enabled = value; }, onPair: token => { saved = token; }, onDownload: data => { received = data; return { id: 'job' }; } });
   await bridge.start(); t.after(() => bridge.close());
   const base = `http://127.0.0.1:${bridge.port}`;
   const headers = { Origin: `chrome-extension://${config.extensionId}`, 'X-Hea-Client': config.extensionId, 'Content-Type': 'application/json' };
@@ -41,14 +41,16 @@ test('tarayıcı köprüsü eşleştirme, origin/token doğrulama ve kapatma ana
   r = await fetch(base + '/pair', { method:'POST', headers, body:JSON.stringify({ code:bridge.code }) }); assert.equal(r.status, 200);
   const { token } = await r.json(); assert.equal(saved, token); assert.equal(bridge.status().paired, true); assert.equal(bridge.status().code, '');
   const auth = { ...headers, Authorization: 'Bearer ' + token };
-  r = await fetch(base + '/status', { headers:auth }); assert.deepEqual(await r.json(), { enabled:true, version:'0.3.0' });
+  r = await fetch(base + '/status', { headers:auth }); assert.deepEqual(await r.json(), { enabled:true, version:'0.4.0', protocol:2 });
   const noOrigin = { ...auth }; delete noOrigin.Origin;
   assert.equal((await fetch(base + '/status', { headers:noOrigin })).status, 200);
   const data = { url:'https://cdn.example.com/a.mp4', pageUrl:'https://example.com/watch', title:'Film' };
   r = await fetch(base + '/download', { method:'POST', headers:auth, body:JSON.stringify(data) }); assert.equal(r.status, 200); assert.equal(received.url, data.url);
   enabled = false; received = null;
   r = await fetch(base + '/download', { method:'POST', headers:auth, body:JSON.stringify(data) }); assert.equal(r.status, 409); assert.equal(received, null);
-  enabled = true;
+  r = await fetch(base + '/enabled', { method:'POST', headers, body:JSON.stringify({enabled:true}) }); assert.equal(r.status,401); assert.equal(enabled,false);
+  r = await fetch(base + '/enabled', { method:'POST', headers:auth, body:JSON.stringify({enabled:'yes'}) }); assert.equal(r.status,400); assert.equal(enabled,false);
+  r = await fetch(base + '/enabled', { method:'POST', headers:auth, body:JSON.stringify({enabled:true}) }); assert.equal(r.status,200); assert.equal(enabled,true);
   r = await fetch(base + '/download', { method:'POST', headers:auth, body:JSON.stringify({ ...data, url:'file:///C:/secret' }) }); assert.equal(r.status, 400);
   r = await fetch(base + '/download', { method:'POST', headers:auth, body:JSON.stringify({ ...data, drm:true }) }); assert.equal(r.status, 400);
   bridge.reset(); assert.equal(saved, ''); assert.equal((await fetch(base + '/status', { headers:auth })).status, 401);

@@ -1,6 +1,6 @@
 importScripts('media.js');
 const BASE = 'http://127.0.0.1:38473';
-let connection = { connected: false, enabled: false, paired: false, error: 'hea-indir programını açıp eklentiyi eşleştir.' }, checkedAt = 0, checking;
+let connection = { connected: false, enabled: false, paired: false, userEnabled: false, error: '' }, checkedAt = 0, checking, starting;
 const serial = new Map(), requests = new Map();
 chrome.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
 const tabKey = id => 'tab:' + id;
@@ -20,7 +20,7 @@ async function request(path, body, token) {
   if (body) headers['Content-Type'] = 'application/json';
   let response;
   try { response = await fetch(BASE + path, { method: body ? 'POST' : 'GET', headers, body: body ? JSON.stringify(body) : undefined, credentials: 'omit', cache: 'no-store', signal: AbortSignal.timeout(3500) }); }
-  catch { throw new Error('hea-indir programına ulaşılamıyor. Programı açık tut.'); }
+  catch { throw new Error('Arka plan bağlantısı kurulamadı. Windows paketindeki Chrome bağlantısını kurup yeniden dene.'); }
   const result = await response.json();
   if (!response.ok) { const error = new Error(result.error || 'Bağlantı kurulamadı.'); error.status = response.status; throw error; }
   return result;
@@ -29,15 +29,59 @@ async function sync(force = false) {
   if (!force && Date.now() - checkedAt < 1800) return connection;
   if (checking) return checking;
   checking = (async () => {
-    const { token } = await chrome.storage.local.get('token');
+    const { token, enabled = false } = await chrome.storage.local.get(['token', 'enabled']);
     try {
-      if (!token) throw new Error('Programın Ayarlar → Chrome eklentisi bölümündeki kodla eşleştir.');
+      if (!token) throw new Error('İlk kullanım için Windows paketindeki Chrome bağlantısını kur, ardından anahtarı aç.');
       const status = await request('/status', null, token);
-      connection = { connected: true, paired: true, enabled: status.enabled, selection: status.selection, error: '' };
-    } catch (error) { connection = { connected: false, enabled: false, paired: Boolean(token) && error.status !== 401, error: error.message }; }
+      connection = { connected: true, paired: true, userEnabled: enabled, enabled: enabled && status.enabled, selection: status.selection, jobs: status.jobs || [], protocol: status.protocol, error: '' };
+    } catch (error) { connection = { connected: false, enabled, userEnabled: enabled, paired: Boolean(token) && error.status !== 401, error: error.message, jobs: [] }; }
     checkedAt = Date.now(); checking = null; return connection;
   })();
   return checking;
+}
+async function ensureStarted() {
+  if (starting) return starting;
+  starting = (async () => {
+    let result;
+    try { result = await chrome.runtime.sendNativeMessage('com.hea.indir', { action: 'start' }); }
+    catch { throw new Error('Bir kez kurulum gerekli: Windows paketinde resources → native → Chrome-Baglantisini-Kur.cmd dosyasını çalıştır. Sonra yeniden aç.'); }
+    if (!result?.ok || !/^[a-f0-9]{64}$/.test(result.token || '')) throw new Error(result?.error || 'Arka plan bileşeni başlatılamadı.');
+    await chrome.storage.local.set({ token: result.token });
+    for (let i = 0; i < 40; i++) {
+      try {
+        const status = await request('/status', null, result.token);
+        if (status.protocol !== 2) throw new Error('Eski hea-indir sürümünü tamamen kapatıp 0.4.0 Windows paketini kur.');
+        return result.token;
+      } catch (error) { if (error.message.includes('Eski hea-indir') || i === 39) throw error; }
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+  })();
+  try { return await starting; } finally { starting = null; }
+}
+let switching = Promise.resolve();
+async function setEnabled(enabled) {
+  if (typeof enabled !== 'boolean') throw new Error('Geçersiz anahtar değeri.');
+  if (enabled) {
+    // Polls never launch a process; only explicit popup/download actions can.
+    const token = await ensureStarted();
+    await request('/enabled', { enabled: true }, token);
+    await chrome.storage.local.set({ enabled: true });
+  } else {
+    await chrome.storage.local.set({ enabled: false });
+    connection.enabled = false; requests.clear();
+    const { token } = await chrome.storage.local.get('token');
+    if (token) { try { await request('/enabled', { enabled: false }, token); } catch { /* Local OFF also works with the app stopped. */ } }
+  }
+  if (checking) await checking;
+  return sync(true);
+}
+async function downloadRequest(body) {
+  if (!(await chrome.storage.local.get('enabled')).enabled) throw new Error('Eklenti kapalı. Önce anahtarı aç.');
+  let status = await sync(true);
+  if (!status.connected) { await ensureStarted(); status = await sync(true); }
+  if (!(await chrome.storage.local.get('enabled')).enabled || !status.enabled) throw new Error('İndirme kapalı. Eklentideki anahtarı aç.');
+  const { token } = await chrome.storage.local.get('token');
+  return request('/download', body, token);
 }
 async function observe(tabId, item) {
   if (tabId < 0 || !(await sync()).enabled) return;
@@ -72,15 +116,22 @@ sync();
 async function handle(message, sender) {
   if (sender.id !== chrome.runtime.id) throw new Error('İstek reddedildi.');
   const fromPopup = sender.url === chrome.runtime.getURL('popup.html');
+  if (message.type === 'toggle') {
+    if (!fromPopup) throw new Error('İstek reddedildi.');
+    const next = switching.catch(() => {}).then(() => setEnabled(message.enabled));
+    switching = next; return next;
+  }
   if (message.type === 'pair') {
     if (!fromPopup || !/^\d{6}$/.test(message.code)) throw new Error('Altı haneli eşleştirme kodunu gir.');
     const result = await request('/pair', { code: message.code });
     await chrome.storage.local.set({ token: result.token }); await sync(true); return connection;
   }
   const id = fromPopup ? message.tabId : sender.tab?.id;
+  if (message.type === 'status' && fromPopup && (!Number.isInteger(id) || id < 0)) return { ...await sync(), items: [] };
   if (!Number.isInteger(id) || id < 0) throw new Error('Bir video sekmesi aç.');
   if (message.type === 'observe') {
     if (!sender.tab) throw new Error('İstek reddedildi.');
+    if (!(await sync()).enabled) return {};
     if (message.drm) await changeTab(id, s => { s.drm = true; return s; });
     for (const item of (Array.isArray(message.items) ? message.items : []).slice(0, 12)) {
       const kind = HeaMedia.kind(item.url, '', true);
@@ -97,18 +148,16 @@ async function handle(message, sender) {
   if (!state.drm && HeaMedia.knownPage(pageUrl)) items = [{ id: 'page', url: pageUrl, kind: 'Sayfa', title: tab.title || 'Video sayfası' }];
   if (message.type === 'status') return { ...status, drm: Boolean(state.drm), items: status.enabled ? items : [], pageUrl, title: tab.title || 'Video' };
   if (message.type === 'download') {
-    if (!status.connected || !status.enabled) throw new Error(status.error || 'Programdan tarayıcı indirmesini aç.');
+    if (!status.enabled) throw new Error('İndirme kapalı. Eklentideki anahtarı aç.');
     if (state.drm) throw new Error('Bu oynatıcı DRM korumalı; desteklenmiyor.');
     // The content script can select only a previously detected source, never an arbitrary request.
     const item = items.find(x => x.id === message.id);
     if (!item || !pageUrl) throw new Error('Kaynak artık bulunamıyor. Videoyu yeniden oynat.');
-    const { token } = await chrome.storage.local.get('token');
-    return request('/download', { url: item.url, pageUrl, referrer: item.referrer || pageUrl, userAgent: item.userAgent || '', title: tab.title || item.title }, token);
+    return downloadRequest({ url: item.url, pageUrl, referrer: item.referrer || pageUrl, userAgent: item.userAgent || '', title: tab.title || item.title });
   }
   if (message.type === 'page' && fromPopup) {
     if (!status.enabled || !pageUrl || state.drm) throw new Error('Bu sayfa şu anda gönderilemiyor.');
-    const { token } = await chrome.storage.local.get('token');
-    return request('/download', { url: pageUrl, pageUrl, title: tab.title }, token);
+    return downloadRequest({ url: pageUrl, pageUrl, title: tab.title });
   }
   throw new Error('İşlem bulunamadı.');
 }

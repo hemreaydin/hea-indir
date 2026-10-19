@@ -1,38 +1,24 @@
-# hea-indir · Chrome eklentisi 0.3.0
+# hea-indir 0.4.0 · Chrome kurulumu
 
-Bu klasör Chrome'a yüklenir. Windows için **hea-indir 0.3.0** uygulaması da açık olmalıdır.
+1. Windows 0.4.0 ZIP paketini tamamen, kalıcı bir klasöre çıkar. Eski hea-indir sürümünü tamamen kapat.
+2. İçindeki **resources → native → Chrome-Baglantisini-Kur.cmd** dosyasını bir kez çalıştır. Yönetici olarak çalıştırmana gerek yok.
+3. Chrome'da chrome://extensions sayfasına git ve **Geliştirici modu**nu aç.
+4. **Paketlenmemiş öğe yükle** ile Windows paketindeki resources/extension klasörünü veya Chrome ZIP'inden çıkardığın hea-indir-Chrome klasörünü seç.
+5. Eklenti önceden yüklüyse eski kaydın klasöründeki dosyaları güncelleyip **Yenile** düğmesine bas. Farklı klasöre geçtiysen eski kaydı kaldırıp yeni klasörü yükle. Sayfaları da yenile.
+6. Chrome araç çubuğundaki hea-indir simgesine bas ve **Video indirme** anahtarını **AÇIK** yap.
 
-## Bir kez kur
+İlk açılış varsayılan olarak KAPALI'dır. Windows bağlantısı kurulduktan sonra eşleştirme otomatik yapılır. Programı elle açman gerekmez. Anahtar açıkken videoyu oynat; sağ üstteki sarı düğmeye bas veya eklenti içinden kaynağı seç. Son indirmelerin durumunu eklentide görebilirsin.
 
-1. hea-indir'i aç; **Ayarlar → Chrome eklentisi → Eklenti klasörünü aç** düğmesine bas.
-2. Chrome adres çubuğuna `chrome://extensions` yaz.
-3. Sağ üstte **Geliştirici modu**nu aç.
-4. **Paketlenmemiş öğe yükle** düğmesine bas; içinde `manifest.json` bulunan eklenti klasörünü seç. ZIP dosyasını seçme; önce çıkar.
-5. Chrome'un yapboz simgesinden **hea-indir** eklentisini aç; istersen sabitle.
-6. Programın **Ayarlar → Chrome eklentisi** bölümündeki altı haneli kodu yazıp **Bağlan** de. Kodun süresi dolarsa programdan **Yeni kod** al.
+**KAPALI** yeni indirmeleri engeller ve sayfa düğmesini gizler. Devam eden indirmeler kesilmez. Açık/kapalı tercihi Chrome yeniden açıldığında da korunur.
 
-Eklenti klasörünü taşımadan veya silmeden sakla. Programın paketindeki `resources/extension` klasörü veya ayrı çıkarılmış Chrome eklentisi klasörü kullanılabilir. Eklenti Chrome Web Mağazası'nda yayımlanmış değildir; yerel geliştirici kurulumu kullanılır. Chrome kuruluş tarafından yönetiliyorsa bu kurulum kısıtlanmış olabilir.
+Program penceresindeki X yalnızca pencereyi gizler. Tamamen kapatmak için saat yanındaki hea-indir simgesinde **Çıkış** seç. Eklenti açıkken sonraki İndir tıklaması programı tekrar başlatır. Windows'a girişte otomatik başlatma veya sürekli çalışan bir sistem servisi kurulmaz.
 
-## Videoyu indir
+## Sorun giderme
 
-1. hea-indir'de **Video + ses / Yalnızca ses / Yalnızca video**, format, kalite ve kayıt klasörünü seç.
-2. Chrome'da video sayfasını açıp videoyu birkaç saniye oynat. Önceden açık sayfalarda kurulumdan sonra sayfayı yenile.
-3. Sağ üstteki sarı **Videoyu indir** düğmesine bas. Birden fazla kaynak bulunursa listeden seç. Programda yalnızca ses seçiliyse düğmede **Sesi indir** yazar.
-4. Video bilgileri alınınca indirme programda otomatik başlar. Durumu ve iptal düğmesini hea-indir'den yönet.
+- **Bir kez kurulum gerekli:** Windows paketindeki bağlantı kurulumunu çalıştır. Eklenti tek başına indirme motorunu içermez.
+- **Eski sürüm açık:** 0.3.0 penceresini kapat; 0.4.0 için saat yanından Çıkış kullan. Sonra eklentide anahtarı yeniden aç.
+- **Klasörü taşıdım:** Yeni klasörde Chrome-Baglantisini-Kur.cmd dosyasını yeniden çalıştır.
+- **Kaynak görünmüyor:** Sayfayı yenile ve videoyu birkaç saniye oynat. Her site desteklenmez; DRM, hesap girişi, canlı yayın ve listeler desteklenmez.
+- **Bağlantıyı kaldırmak:** resources/native/Chrome-Baglantisini-Kaldir.cmd çalıştır. İndirmelerin ve ayarların silinmez.
 
-Chrome araç çubuğundaki eklenti simgesi de algılanan kaynakları gösterir. Kaynak algılanmazsa **Sayfa bağlantısını programda dene** seçeneği kullanılabilir. Bu seçenek, indirme motorunun desteklediği sayfalarda çalışır.
-
-## Düğmeyi kapat / aç
-
-**hea-indir → Ayarlar → Chrome eklentisi → Video düğmesini göster** anahtarını kapat veya aç. Değişiklik yaklaşık 2–6 saniyede sayfalara yansır. Program kapalıyken düğme gizlenir. Başlamış indirmeler anahtarı kapatınca devam eder. Tercih sonraki açılışta korunur.
-
-## Destek ve veri kullanımı
-
-- YouTube, Instagram, TikTok, Facebook ve yt-dlp'nin desteklediği diğer video sayfaları; doğrudan MP4/WebM gibi video dosyaları; korumasız HLS/DASH kayıtları hedeflenir.
-- Her site ve oynatıcı desteklenmez. `blob:` tek başına indirilebilir bir dosya adresi değildir; alttaki yayın bağlantısının algılanması gerekir. Reklam videoları da kaynak listesinde görünebilir.
-- DRM koruması, canlı yayın, oynatma listesi, özel hesap oturumu ve erişim denetimi aşma desteklenmez. Süresi dolan bağlantılarda videoyu yeniden oynatıp tekrar gönder.
-- Farklı sitelerde ve gömülü oynatıcılarda video algılamak için Chrome tüm HTTP/HTTPS sitelerinde erişim izni gösterir. Eklenti medya adresi, sayfa başlığı ve video isteğinin referans adresi/tarayıcı bilgisini kullanır. Çerez veya hesap şifresi programa aktarılmaz.
-- Algılanan adresler tarayıcı oturumunda tutulur. Seçtiğin kaynak, yalnızca yerel `127.0.0.1:38473` bağlantısıyla kendi hea-indir programına gönderilir. Merkezi bir sunucuya gönderim yoktur. İndirme sırasında kaynak video sunucusuna bağlanılır.
-- Yalnızca indirme hakkın olan içerikleri kaydet.
-
-Kaynak belgeler: [Chrome eklentisi kurulumu](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked), [webRequest](https://developer.chrome.com/docs/extensions/reference/api/webRequest), [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+Bağlantı sadece bu eklentinin sabit kimliğine izin verir. Şifre ve tarayıcı çerezleri aktarılmaz. Tür, biçim, kalite ve klasör ayarları masaüstü uygulamasından alınır.

@@ -39,8 +39,9 @@
   }
   async function download(id) {
     sending = true; button.disabled = true; panel.hidden = false; panel.textContent = 'hea-indir’e gönderiliyor…';
-    try { const result = await send({ type: 'download', id }); panel.textContent = result.message; }
-    catch (error) { panel.textContent = error.message; }
+    const target = panel;
+    try { const result = await send({ type: 'download', id }); target.textContent = result.message; }
+    catch (error) { target.textContent = error.message; }
     finally { sending = false; if (button) button.disabled = false; }
   }
   async function tick() {
@@ -48,9 +49,9 @@
     try {
       status = await send({ type: 'status' });
       if (!status) return;
-      if (status.connected && status.enabled) scan(); else signature = '';
+      if (status.enabled) scan(); else signature = '';
       if (!topFrame) return;
-      if (!status.connected || !status.enabled || !status.items.length || status.drm) { host?.remove(); host = root = button = panel = null; return; }
+      if (!status.enabled || !status.items.length || status.drm) { host?.remove(); host = root = button = panel = null; return; }
       install();
       if (button && !sending) {
         const label = status.selection?.mode === 'audio' ? 'Sesi indir' : status.selection?.mode === 'video' ? 'Sessiz video indir' : 'Videoyu indir';

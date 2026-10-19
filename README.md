@@ -15,11 +15,17 @@ Bu depo yalnızca kaynak kodunu, ikonları ve lisansları içerir. İndirme geç
 
 
 
-## 0.3.0 · Chrome ve web videoları
+## 0.4.0 · Eklentiden aç/kapat ve otomatik başlatma
 
-Chrome eklentisi sayfadaki video dosyalarını ve HLS/DASH yayın adreslerini algılar. Üst sağdaki sarı düğme seçilen kaynağı yerel hea-indir programına gönderir; bilgiler alınınca indirme otomatik başlar. Ana penceredeki tür, format, kalite ve klasör seçimi kullanılır. Programdan **Ayarlar → Chrome eklentisi → Video düğmesini göster** anahtarıyla düğme açılıp kapatılır; tercih korunur. Program kapalıyken düğme gizlenir.
+Chrome eklentisindeki **Video indirme → AÇIK / KAPALI** anahtarı yeni indirmeleri ve sayfadaki düğmeyi kontrol eder. Tercih tarayıcı yeniden açıldığında korunur. Kapalıyken yeni indirme başlatılmaz; devam eden işler tamamlanır.
 
-Eklenti kurulumu için [Chrome kılavuzuna](extension/KURULUM.md) bak. Programdaki **Eklenti klasörünü aç** düğmesi hazır klasörü gösterir. Chrome'a bir kez paketlenmemiş eklenti olarak yüklenir, programdaki altı haneli kodla eşleştirilir. Chrome Web Mağazası yayını bu pakete dahil değildir.
+İlk kullanımda Windows paketindeki resources/native/Chrome-Baglantisini-Kur.cmd dosyasını bir kez çalıştır. Alternatif olarak programda **Ayarlar → Chrome eklentisi → Chrome'a nasıl eklerim? → Otomatik bağlantıyı kur** düğmesine bas. Yönetici yetkisi gerekmez. Sonra eklentiyi güncelle ve anahtarı aç. Program otomatik olarak arka planda başlar; elle açman veya kod girmen gerekmez.
+
+Pencerenin X düğmesi uygulamayı saat yanına gizler. Tamamen kapatmak için saat yanındaki hea-indir simgesinden **Çıkış** seç. Uygulama kapalıyken de eklenti videoları algılar; **İndir** düğmesi uygulamayı yeniden başlatır. Chrome'un normal durum kontrolleri uygulamayı başlatmaz. Son beş tarayıcı indirmesinin durumu eklentide görünür.
+
+Windows paketi bilgisayarda kalmalıdır. Klasörü taşırsan bağlantı kurulumunu tekrarla. Bağlantıyı kaldırmak için resources/native/Chrome-Baglantisini-Kaldir.cmd çalıştır. Kurulum yalnızca mevcut kullanıcının Chrome Native Messaging kaydını ekler; Windows başlangıcına görev veya servis eklemez.
+
+Biçim, kalite ve kayıt klasörü programdaki seçimlerinden alınır. Ayrıntılar: [Chrome kılavuzu](extension/KURULUM.md).
 
 URL girişi artık dört platformla sınırlı değildir. yt-dlp'nin desteklediği genel video sayfaları ve doğrudan HTTP/HTTPS video bağlantıları kabul edilir. Bazı sitelerde yalnızca eklentinin yakaladığı medya adresi çalışır. Her siteye destek garantisi yoktur; DRM koruması kaldırılmaz, kullanıcı çerezleri veya giriş bilgileri aktarılmaz.
 
@@ -58,9 +64,9 @@ Windows 10/11, 64 bit içindir. Telefon sürümü dahil değildir.
 
 Herkese açık, tekil videolar hedeflenir. Özel içerikler, hesap girişi isteyen videolar, canlı yayınlar ve oynatma listeleri bu sürümde desteklenmez. Platformun bölge, oturum veya istek sınırları nedeniyle bazı bağlantılar indirilemeyebilir. Her sitedeki her videonun indirileceği garanti edilmez. Yalnızca indirme hakkın olan içerikleri kaydet.
 
-İndirmeler sırayla yapılır. İptal edilen iş yeniden başlatıldığında baştan indirilir. Uygulama kapatılırken etkin işler için onay sorulur. Bekleyen kayıtlar sonraki açılışta korunur; kendiliğinden indirme başlamaz. Liste ve geçmiş temizliği indirilen dosyaları silmez.
+İndirmeler sırayla yapılır. İptal edilen iş yeniden başlatıldığında baştan indirilir. Saat yanındaki Çıkış seçeneği etkin işleri iptal etmeden önce onay sorar. Bekleyen kayıtlar sonraki açılışta korunur; kendiliğinden indirme başlamaz. Liste ve geçmiş temizliği indirilen dosyaları silmez.
 
-Uygulamanın kod imzası yoktur. Uygulama sürümü 0.3.0'dır; motor güncellemesi yalnızca yt-dlp'yi günceller, arayüzü veya FFmpeg'i güncellemez.
+Uygulamanın kod imzası yoktur. Uygulama sürümü 0.4.0'dır; motor güncellemesi yalnızca yt-dlp'yi günceller, arayüzü veya FFmpeg'i güncellemez.
 
 ## Kaynaktan çalıştırma
 

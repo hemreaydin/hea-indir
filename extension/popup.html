@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>hea-indir</title><link rel="stylesheet" href="popup.css"></head><body>
-<header><img src="icons/48.png" width="36" height="36" alt=""><div><strong>hea<span>-indir</span></strong><small>İzlediğin video, bilgisayarında.</small></div><b>0.3</b></header>
-<p id="connection" role="status">Program kontrol ediliyor…</p>
-<form id="pair-form" hidden><label for="code">Programdaki 6 haneli eşleştirme kodu</label><div class="pair-row"><input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="off" required><button type="submit">Bağlan</button></div><small>hea-indir → Ayarlar → Chrome eklentisi</small></form>
-<section><div class="section-heading"><h1>Bu sayfadaki videolar</h1><button class="subtle" id="refresh" title="Yenile">↻</button></div><div id="sources"></div><button id="send-page" class="secondary" hidden>Sayfa bağlantısını programda dene</button></section>
-<p id="notice" role="status" hidden></p><footer>Sağ üstteki video düğmesini programın <b>Ayarlar → Chrome eklentisi</b> bölümünden kapatabilirsin.</footer>
+<header><img src="icons/48.png" width="36" height="36" alt=""><div><strong>hea<span>-indir</span></strong><small>İzlediğin video, bilgisayarında.</small></div><b>0.4</b></header>
+<label class="power" for="enabled"><span><strong>Video indirme</strong><small id="switch-label">KAPALI</small></span><input type="checkbox" id="enabled" role="switch" aria-label="Video indirmeyi aç veya kapat"><span class="track" aria-hidden="true"></span></label>
+<p id="connection" role="status">Bağlantı kontrol ediliyor…</p>
+<section><div class="section-heading"><h1>Bu sayfadaki videolar</h1><button class="subtle" id="refresh" title="Yenile">↻</button></div><div id="sources"></div><button id="send-page" class="secondary" hidden>Sayfa bağlantısıyla indirmeyi dene</button></section>
+<p id="notice" role="status" hidden></p><section id="recent" hidden><h1>Son indirmeler</h1><div id="jobs"></div></section>
+<footer><details><summary>İlk kullanım / bağlantı kurulumu</summary><p>Windows 0.4.0 paketini bir klasöre çıkar. <b>resources → native → Chrome-Baglantisini-Kur.cmd</b> dosyasını bir kez çalıştır. Ardından yukarıdaki anahtarı aç.</p><p>Programı elle açman gerekmez. Klasörün yerini değiştirirsen bağlantıyı yeniden kur. Biçim, kalite ve kayıt klasörü programdaki seçimlerinden alınır.</p></details><p>Kapattığında yeni indirmeler engellenir; başlamış indirmeler devam eder.</p></footer>
 <script src="popup.js"></script></body></html>

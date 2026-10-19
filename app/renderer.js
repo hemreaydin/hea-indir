@@ -145,6 +145,7 @@ $('#theme-select').addEventListener('change', guard(event => call('theme', event
 $('#browser-enabled').addEventListener('change', guard(event => call('browser-enabled', event.target.checked)));
 $('#browser-pair').addEventListener('click', guard(() => call('browser-pair')));
 $('#browser-code-copy').addEventListener('click', guard(async () => { await call('browser-code-copy'); toast('Eşleştirme kodu kopyalandı.'); }));
+$('#browser-install').addEventListener('click', guard(async () => toast(await call('browser-install'))));
 $('#browser-folder').addEventListener('click', guard(() => call('browser-folder')));
 $$('.nav-item').forEach(button => button.addEventListener('click', () => showView(button.dataset.view)));
 $('.brand').addEventListener('click', event => { event.preventDefault(); showView('download'); });

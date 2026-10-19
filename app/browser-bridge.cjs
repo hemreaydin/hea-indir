@@ -4,8 +4,8 @@ const { browserSource } = require('./web-source.cjs');
 
 const same = (a, b) => typeof a === 'string' && typeof b === 'string' && Buffer.byteLength(a) === Buffer.byteLength(b) && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 class BrowserBridge {
-  constructor({ extensionId, port = 38473, token = '', enabled, selection, onPair, onDownload, onChange = () => {} }) {
-    Object.assign(this, { extensionId, port, token, enabled, selection, onPair, onDownload, onChange });
+  constructor({ extensionId, port = 38473, token = '', enabled, selection, onPair, onDownload, onEnabled, jobs, onChange = () => {} }) {
+    Object.assign(this, { extensionId, port, token, enabled, selection, onPair, onDownload, onEnabled, jobs, onChange });
     this.ready = false; this.error = ''; this.attempts = 0; this.lockUntil = 0;
     this.newCode();
   }
@@ -49,7 +49,15 @@ class BrowserBridge {
       return this.reply(res, 200, { token: this.token });
     }
     if (!this.token || !same(req.headers.authorization, `Bearer ${this.token}`)) return this.reply(res, 401, { error: 'Önce eklentiyi programla eşleştir.' });
-    if (req.method === 'GET' && req.url === '/status') return this.reply(res, 200, { enabled: this.enabled(), version: '0.3.0', ...(this.selection ? { selection: this.selection() } : {}) });
+    if (req.method === 'GET' && req.url === '/status') return this.reply(res, 200, { enabled: this.enabled(), version: '0.4.0', protocol: 2, ...(this.selection ? { selection: this.selection() } : {}), ...(this.jobs ? { jobs: this.jobs() } : {}) });
+    if (req.method === 'POST' && req.url === '/enabled' && this.onEnabled) {
+      try {
+        const input = await this.body(req);
+        if (typeof input.enabled !== 'boolean') throw new Error('Geçersiz anahtar değeri.');
+        await this.onEnabled(input.enabled);
+        return this.reply(res, 200, { enabled: this.enabled() });
+      } catch (error) { return this.reply(res, 400, { error: error.message }); }
+    }
     if (req.method === 'POST' && req.url === '/download') {
       if (!this.enabled()) return this.reply(res, 409, { error: 'Tarayıcıdan indirme programdan kapatılmış.' });
       try { const result = await this.onDownload(browserSource(await this.body(req))); return this.reply(res, 200, result); }

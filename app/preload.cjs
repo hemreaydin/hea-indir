@@ -1,5 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const channels = new Set(['state', 'clipboard', 'add', 'defaults', 'theme', 'options', 'start', 'cancel', 'remove', 'clear', 'choose-folder', 'folder', 'show-file', 'source', 'health', 'update', 'browser-enabled', 'browser-pair', 'browser-code-copy', 'browser-folder']);
+const channels = new Set(['state', 'clipboard', 'add', 'defaults', 'theme', 'options', 'start', 'cancel', 'remove', 'clear', 'choose-folder', 'folder', 'show-file', 'source', 'health', 'update', 'browser-enabled', 'browser-pair', 'browser-code-copy', 'browser-folder', 'browser-install']);
 contextBridge.exposeInMainWorld('hea', {
   call: async (name, ...args) => {
     if (!channels.has(name)) throw new Error('Geçersiz işlem.');

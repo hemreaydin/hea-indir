@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "hea-indir • Videoyu yakala",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Algılanan videoları bilgisayarındaki hea-indir uygulamasına gönder.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxZuI4UcU1wbbWUnnBSxyu88UHg3ZC+ihubDRjlKMG1AQXQ/iTOP4ITfsOdmFNUyEV/CUJWpH+3V9mek5aaY1o9J9++ETMB5GHbvxtQgNPKjhWD6bRvqzD9jLOyqBSy4No5EmWtYeryVyBNSWEAZvMCveYYUTNJ59kxr0mmV4uIyf1LB9i3LJM6/kKQIX4Kj3R6JxEaolWWUH6OUCEXV60SSaycMd2n8Qk8r/UkmzZ3n8E7TOGn+366U+kXoLWw07rO8lhU57xFVSfUJJ+d5WyYZ1lZBZ1IgKx6An6X7qiB676EBLEwP2a/IA/c7j3sWeXjU8diEdvgi48XqF7ZtJiQIDAQAB",
   "minimum_chrome_version": "120",
@@ -9,7 +9,8 @@
     "storage",
     "webRequest",
     "alarms",
-    "activeTab"
+    "activeTab",
+    "nativeMessaging"
   ],
   "host_permissions": [
     "http://*/*",
